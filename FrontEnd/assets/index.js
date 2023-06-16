@@ -1,47 +1,114 @@
 const galery = document.querySelector(".gallery");
 const portFolio = document.getElementById("portfolio");
-let categories = [];
 let work = [];
 
 //-----------------
-//récupération des API
+//récupération API Categories (pour les filtres)
 //*****************
+const fetchCategories = async () => {
+  const categories = await fetch("http://localhost:5678/api/categories");
+  // console.log(categories);
+  const categoriesDecoded = await categories.json();
+  // console.log(categoriesDecoded);
+  return categoriesDecoded;
+};
+//-------------------------------- */
 
-const fetchCategory = async () => {
-  await fetch("http://localhost:5678/api/categories")
-    .then((response) => response.json()) //Méthode .json() => méthode qui renvoie le body de la requête.
-    .then((dataCategories) => (categories = dataCategories));
-
-  console.log(categories);
-  const buttonDiv = document.createElement("div");
+//Création des boutons
+// création bouton "tous"
+const displayCategories = async () => {
+  const categoriesFilter = document.getElementById("categoriesFilter");
+  const categories = await fetchCategories();
+  // console.log(categories);
   const addButton = document.createElement("button");
+  categoriesFilter.appendChild(addButton);
   addButton.classList.add("button_form");
-  buttonDiv.classList.add("button_div");
+  addButton.classList.add("button_select");
+  categoriesFilter.classList.add("portfolio_button");
   addButton.textContent = " Tous";
+  // au click sur le bouton "tous" , affiche moi toute la gallerie.
+  addButton.addEventListener("click", () => {
+    display();
+  });
 
-  portFolio.appendChild(buttonDiv);
+  //***********************************
+  //création bouton "filters"
+
   categories.forEach((categorie) => {
     const addButton = document.createElement("button");
-    buttonDiv.appendChild(addButton);
+    categoriesFilter.appendChild(addButton);
     addButton.classList.add("button_form");
     addButton.textContent = categorie.name;
-    buttonDiv.classList.add("button_div");
+    console.log(categorie);
+
+    addButton.addEventListener("click", () => {
+      console.log("click");
+
+      if (categorie.name == "Hotels & restaurants") {
+        console.log("Hotel !");
+        displayHotel();
+      }
+      if (categorie.name == "Objets") {
+        console.log("Objet!");
+        displayObjet();
+      }
+      if (categorie.name == "Appartements") {
+        console.log("Appart!");
+        displayApartment();
+      }
+    });
   });
-  buttonDiv.appendChild(addButton);
+  categoriesFilter.appendChild(addButton);
 };
-
+//******************** */
+//-------------------------
+//recupération API work ( pour les images du projet)
 const fetchWork = async () => {
-  await fetch("http://localhost:5678/api/works")
-    .then((response) => response.json()) //Méthode .json() => méthode qui renvoie le body de la requête.
-    .then((dataWork) => (work = dataWork));
-
+  const work = await fetch("http://localhost:5678/api/works");
   console.log(work);
+  const workDecoded = await work.json();
+  console.log(workDecoded);
+  displayWork = workDecoded;
+  console.log(displayWork);
+  displayWork.forEach((e) => {
+    // récupere la catégory de l'oeuvre
+    const categorieWork = e.category.name;
+    console.log(categorieWork);
+  });
+  // filtre la catégorie appartement.
+  //******************* */
+  const apartmentWork = displayWork.filter(function (apartment) {
+    return apartment.category.name == "Appartements";
+  });
+  // console.log(apartmentWork);
+  displayfilterAp = apartmentWork;
+  //************************* */
+
+  // filtre la partie Objets
+  //*********************** */
+  const objetWork = displayWork.filter(function (objet) {
+    return objet.category.name == "Objets";
+  });
+  displayFilterObjet = objetWork;
+  // console.log(displayFilterObjet);
+  //***************************** */
+
+  // filtre la partie Hotels & restaurant
+  //********************************** */
+  const hotelWork = displayWork.filter(function (objet) {
+    return objet.category.name == "Hotels & restaurants";
+  });
+  displayFilterHotel = hotelWork;
+  // console.log(displayFilterHotel);
 };
 
+//--------------------- */
+
+// modelage de la partie gallery
 const display = async () => {
-  await fetchCategory();
+  await fetchCategories();
   await fetchWork();
-  galery.innerHTML = work
+  galery.innerHTML = displayWork
     .map(
       (projet) =>
         `
@@ -51,6 +118,52 @@ const display = async () => {
       </figure>
   `
     )
+
     .join("");
 };
+
+const displayApartment = async () => {
+  galery.innerHTML = displayfilterAp
+    .map(
+      (projet) =>
+        `
+  <figure>
+    <img src=${projet.imageUrl} alt="photo de ${projet.title}">
+    <figcaption>${projet.title}</figcaption>
+  </figure>
+`
+    )
+    .join("");
+};
+
+const displayObjet = async () => {
+  galery.innerHTML = displayFilterObjet
+    .map(
+      (projet) =>
+        `
+  <figure>
+    <img src=${projet.imageUrl} alt="photo de ${projet.title}">
+    <figcaption>${projet.title}</figcaption>
+  </figure>
+`
+    )
+    .join("");
+};
+const displayHotel = async () => {
+  galery.innerHTML = displayFilterHotel
+    .map(
+      (projet) =>
+        `
+  <figure>
+    <img src=${projet.imageUrl} alt="photo de ${projet.title}">
+    <figcaption>${projet.title}</figcaption>
+  </figure>
+`
+    )
+    .join("");
+};
+//------------------------------ */
 display();
+(function Main() {
+  displayCategories();
+})();

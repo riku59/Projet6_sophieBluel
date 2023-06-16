@@ -66,12 +66,15 @@ body {
 	transition: 800ms ;
 	cursor: pointer;
 }
+.button_select {
+	background-color: #1D6154;
+	color: white;
+}
 .button_form:hover{
 	background-color: #1D6154;
 	color: white;
-
 }
-.button_div {
+.portfolio_button {
 	display: flex;
 	justify-content: center;
 	gap:10px;
