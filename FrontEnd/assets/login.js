@@ -23,7 +23,7 @@ const passwordInput = document.getElementById("password");
 const submitLog = document.querySelector('input[type="submit"');
 const errorDisplay = document.getElementById("notFound");
 // console.log(submitLog);
-console.log(errorDisplay);
+// console.log(errorDisplay);
 
 const emailCheker = (value) => {
   const errorMail = document.querySelector(".log_form span");
@@ -46,12 +46,13 @@ mailInput.addEventListener("input", (e) => {
 passwordInput.addEventListener("input", (e) => {
   console.log(e.target.value);
 });
-stockEmail = mailInput.value;
-stockPassword = passwordInput.value;
+
 //----------------------------------------------------
 // test de l'identifiant + mot de passe
 submitLog.addEventListener("click", (e) => {
   e.preventDefault();
+  stockEmail = mailInput.value;
+  stockPassword = passwordInput.value;
   requestLogin()
     .then((Response) => Response.json())
     .then((login) => {
@@ -62,7 +63,7 @@ submitLog.addEventListener("click", (e) => {
         window.location.href = "./index.html";
         console.log("Utilisateur connécté");
       } else {
-        console.error("Le token n'a pas été trouvé");
+        console.error(" token introuvable");
         errorDisplay.textContent = "Identifiant ou Mot de passe incorrect";
         errorDisplay.classList.add("notFound");
       }
