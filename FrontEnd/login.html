@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body id="connection">
+    <header>
+      <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+      <nav>
+        <ul>
+          <a href="./index.html"><li>projets</li></a>
+          <a href="./index.html#contact "><li>contact</li></a>
+          <a href="./login.html"><li>login</li></a>
+          <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section class="log_in" id="contact">
+        <h2>Log In</h2>
+        <form action="#" class="log_form">
+          <label for="email">E-mail</label>
+          <input type="email" name="email" id="email" />
+          <span></span>
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" />
+          <input type="submit" value="Se connecter" />
+          <p>Mot de passe oublié</p>
+          <span id="notFound"></span>
+        </form>
+      </section>
+    </main>
+    <footer>
+      <nav>
+        <ul>
+          <li id="mention_log">Mentions Légales</li>
+        </ul>
+      </nav>
+    </footer>
+    <script src="./assets/login.js"></script>
+  </body>
+</html>
