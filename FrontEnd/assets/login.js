@@ -61,7 +61,7 @@ submitLog.addEventListener("click", (e) => {
       console.log(login); //envoie le UserID et le token lorsque l'identifiant est bon.
       if (login.token) {
         localStorage.setItem("token", login.token); //stock le token dans le localStorage
-        // window.location.href = "./index.html"; // renvoie a la page index.html
+        window.location.href = "./index.html"; // renvoie a la page index.html
         console.log("Utilisateur connécté");
       } else {
         console.error(" token introuvable");

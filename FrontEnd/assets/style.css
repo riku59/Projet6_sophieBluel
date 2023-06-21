@@ -154,10 +154,10 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
-#portfolio h2 {
+/* #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
-}
+} */
 .gallery {
 	width: 100%;
 	display: grid;
@@ -243,7 +243,7 @@ footer nav ul {
 	padding-top: 200px;
 	cursor: pointer;
 }
-span{
+.errorMail{
 	color: red;
 	visibility: hidden;
 	opacity: 0;
@@ -262,4 +262,49 @@ span{
 	text-align: center;
 }
 
-
+.admin-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background: black;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	height: 59px;
+	display: none;
+}
+.admin-header p {
+	color: white;
+}
+.admin-header i {
+	color: white;
+}
+.admin-header button {
+	border-radius: 60px;
+	background: white;
+	color: black;
+	width: 216px;
+	height: 38px;
+	font-weight: 500;
+	cursor: pointer;
+}
+.modif-intro {
+	display: none;
+	margin: auto;
+	width: 80%;
+	gap: 11px;
+	margin-top: 16px;
+	cursor: pointer;
+}
+.container-modif-portfolio {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 1em;
+	gap: 30px;
+}
+.modif-portfolio {
+	display: none;
+	gap: 10px;
+}

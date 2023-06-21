@@ -7,6 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
       rel="stylesheet"
     />
@@ -15,21 +22,33 @@
   </head>
   <body>
     <header>
+      <div class="admin-header">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <p>Mode edition</p>
+        <button>Publier les changements</button>
+      </div>
+
       <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
       <nav>
         <ul>
           <a href="./index.html"><li>projets</li></a>
           <a href="#contact"><li>contact</li></a>
-          <a href="./login.html"><li>login</li></a>
+          <a href="./login.html"><li id="buttonLog">login</li></a>
           <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
         </ul>
       </nav>
     </header>
+
     <main>
       <section id="introduction">
         <figure>
           <img src="./assets/images/sophie-bluel.png" alt="" />
+          <div class="modif-intro">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <p>modifier</p>
+          </div>
         </figure>
+
         <article>
           <h2>Designer d'espace</h2>
           <p>
@@ -49,8 +68,15 @@
           </p>
         </article>
       </section>
+
       <section id="portfolio">
-        <h2>Mes Projets</h2>
+        <div class="container-modif-portfolio">
+          <h2>Mes Projets</h2>
+          <div class="modif-portfolio">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <p>modifier</p>
+          </div>
+        </div>
         <div id="categoriesFilter"></div>
         <div class="gallery">
           <figure>

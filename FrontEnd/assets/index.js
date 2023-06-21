@@ -1,5 +1,10 @@
 const galery = document.querySelector(".gallery");
 const portFolio = document.getElementById("portfolio");
+const token = localStorage.getItem("token");
+const buttonLog = document.getElementById("buttonLog");
+
+console.log(buttonLog);
+console.log(token);
 let work = [];
 
 //-----------------
@@ -162,7 +167,31 @@ const displayHotel = async () => {
     )
     .join("");
 };
+
 //------------------------------ */
+// ajout du Logout et de la mise en page
+//------------------------------ */
+
+const admin = () => {
+  if (token) {
+    const header = document.querySelector("header");
+    const adminHead = document.querySelector(".admin-header");
+    const modifIntro = document.querySelector(".modif-intro");
+    const modifPortfolio = document.querySelector(".modif-portfolio");
+    buttonLog.textContent = "logout";
+    adminHead.style.display = "flex";
+    header.style.marginTop = "100px";
+    modifIntro.style.display = "flex";
+    modifPortfolio.style.display = "flex";
+  }
+};
+buttonLog.addEventListener("click", () => {
+  if (token) {
+    localStorage.removeItem("token");
+  }
+});
+
+admin();
 display();
 (function Main() {
   displayCategories();
