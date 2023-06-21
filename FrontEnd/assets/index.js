@@ -190,9 +190,36 @@ buttonLog.addEventListener("click", () => {
     localStorage.removeItem("token");
   }
 });
+// -----------------------------------
+// fonction modal
+//-------------------------------------
 
-admin();
-display();
+const openGalerieModal = () => {
+  const modifPortfolio = document.querySelector(".modif-portfolio");
+  const titleGalery = document.getElementById("modal-title");
+  console.log(titleGalery);
+  titleGalery.textContent = "Galerie photo";
+  modifPortfolio.addEventListener("click", () => {
+    document.querySelector(".overlay").style.display = "block";
+    document.querySelector(".modal").style.display = "block";
+    const body = document.querySelector("body");
+    // body.addEventListener("click", closeGalerieModal);
+  });
+};
+const overlay = document.querySelector(".overlay");
+const closeGalerieModal = () => {
+  overlay.style.display = "none";
+  document.querySelector(".modal").style.display = "none";
+};
+const closeModifPortfolio = document.querySelector(".fa-xmark");
+closeModifPortfolio.addEventListener("click", () => {
+  closeGalerieModal();
+});
+
 (function Main() {
   displayCategories();
+  openGalerieModal();
+
+  admin();
+  display();
 })();
