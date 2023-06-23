@@ -5,6 +5,7 @@ const modalBody = document.querySelector(".modal-body");
 const titleGalery = document.getElementById("modal-title");
 const returnModal = document.querySelector(".return-modal");
 const modifPortfolio = document.querySelector(".modif-portfolio");
+const formAddPicture = document.querySelector(".modal-footer");
 // console.log(buttonLog);
 // console.log(token);
 
@@ -135,6 +136,7 @@ buttonLog.addEventListener("click", () => {
 const openGalerieModal = () => {
   document.querySelector(".overlay").style.display = "block";
   document.querySelector(".modal").style.display = "block";
+  formAddPicture.style.display = "none";
   titleGalery.textContent = "Galerie photo";
   modalBody.innerHTML = galery.innerHTML;
   const modalFigCaptions = modalBody.querySelectorAll("figcaption");
@@ -161,25 +163,35 @@ const openAddphotoModal = () => {
   });
   const buttonAddPhoto = document.getElementById("add_photo");
   buttonAddPhoto.addEventListener("click", async () => {
-    const ContainerAddPhoto = document.createElement("div");
-    const iconeImg = document.createElement("i");
-    const buttonAddPicture = document.createElement("button");
-    const infoAddPicture = document.createElement("p");
+    const createContainerAddPhoto = document.createElement("div");
+    const createiconeImg = document.createElement("i");
+    const createInputFile = document.createElement("input");
+    const createPara = document.createElement("p");
+    const createLabel = document.createElement("label");
 
+    createLabel.textContent = "+ Ajouter photo ";
+    createInputFile.setAttribute("type", "file");
+
+    createInputFile.style.display = "none";
+    formAddPicture.style.display = "block";
     titleGalery.textContent = "Ajout photo";
-    buttonAddPicture.textContent = "+ Ajouter photo";
-    infoAddPicture.textContent = "jpg,png : 4mo max";
+    createPara.textContent = "jpg,png : 4mo max";
 
-    iconeImg.classList.add("fa-regular", "fa-image", "icone-img");
-    buttonAddPicture.classList.add("button-add-picture");
-    ContainerAddPhoto.classList.add("ContainerAddPhoto");
-    infoAddPicture.classList.add("info-add-picture");
+    createiconeImg.classList.add("fa-regular", "fa-image", "icone-img");
+    createContainerAddPhoto.classList.add("ContainerAddPhoto");
+    createPara.classList.add("info-add-picture");
+    createLabel.classList.add("button-add-picture");
+
+    createLabel.addEventListener("click", () => {
+      createInputFile.click(); // Simuler le clic sur l'input
+    });
 
     modalBody.innerHTML = "";
-    modalBody.appendChild(ContainerAddPhoto);
-    ContainerAddPhoto.appendChild(iconeImg);
-    ContainerAddPhoto.appendChild(buttonAddPicture);
-    ContainerAddPhoto.appendChild(infoAddPicture);
+    modalBody.appendChild(createContainerAddPhoto);
+    createContainerAddPhoto.appendChild(createiconeImg);
+    createContainerAddPhoto.appendChild(createInputFile);
+    createContainerAddPhoto.appendChild(createLabel);
+    createContainerAddPhoto.appendChild(createPara);
 
     returnModal.style.display = "block";
   });
