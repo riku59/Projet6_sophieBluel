@@ -1,11 +1,12 @@
 const galery = document.querySelector(".gallery");
 const portFolio = document.getElementById("portfolio");
 const token = localStorage.getItem("token");
-const buttonLog = document.getElementById("buttonLog");
-
-console.log(buttonLog);
-console.log(token);
-let work = [];
+const modalBody = document.querySelector(".modal-body");
+const titleGalery = document.getElementById("modal-title");
+const returnModal = document.querySelector(".return-modal");
+const modifPortfolio = document.querySelector(".modif-portfolio");
+// console.log(buttonLog);
+// console.log(token);
 
 //-----------------
 //récupération API Categories (pour les filtres)
@@ -24,47 +25,52 @@ const fetchCategories = async () => {
 const displayCategories = async () => {
   const categoriesFilter = document.getElementById("categoriesFilter");
   const categories = await fetchCategories();
+  const works = await fetchWork();
+  console.log("coucou");
+  console.log(createWorkElement(works[0]));
   // console.log(categories);
-  const addButton = document.createElement("button");
-  categoriesFilter.appendChild(addButton);
-  addButton.classList.add("button_form");
-  addButton.classList.add("button_select");
-  categoriesFilter.classList.add("portfolio_button");
-  addButton.textContent = " Tous";
-  // au click sur le bouton "tous" , affiche moi toute la gallerie.
-  addButton.addEventListener("click", () => {
-    display();
-  });
 
+  // au click sur le bouton "tous" , affiche moi toute la gallerie.
+  // addButton.addEventListener("click", () => {
+  //   display();
+  // });
+
+  categories.unshift({ id: -1, name: "Tous" });
+  console.log(categories);
   //***********************************
   //création bouton "filters"
 
   categories.forEach((categorie) => {
-    const addButton = document.createElement("button");
-    categoriesFilter.appendChild(addButton);
-    addButton.classList.add("button_form");
-    addButton.textContent = categorie.name;
+    const addButtonFilter = document.createElement("button");
+    categoriesFilter.appendChild(addButtonFilter);
+    addButtonFilter.classList.add("button_form");
+    addButtonFilter.textContent = categorie.name;
     console.log(categorie);
+    addButtonFilter.setAttribute("id", categorie.name);
+    addButtonFilter.addEventListener("click", (event) => {
+      console.log(event);
+      const idCategorie = event.target.id;
 
-    addButton.addEventListener("click", () => {
-      console.log("click");
+      let objetWork = null;
+      if (idCategorie == "Tous") {
+        objetWork = works;
+      } else {
+        objetWork = works.filter(function (objet) {
+          return objet.category.name == idCategorie;
+        });
+      }
 
-      if (categorie.name == "Hotels & restaurants") {
-        console.log("Hotel !");
-        displayHotel();
-      }
-      if (categorie.name == "Objets") {
-        console.log("Objet!");
-        displayObjet();
-      }
-      if (categorie.name == "Appartements") {
-        console.log("Appart!");
-        displayApartment();
-      }
+      galery.innerHTML = "";
+      objetWork.forEach((work, index) => {
+        const workElement = createWorkElement(work);
+
+        galery.appendChild(workElement);
+      });
     });
+    categoriesFilter.appendChild(addButtonFilter);
   });
-  categoriesFilter.appendChild(addButton);
 };
+
 //******************** */
 //-------------------------
 //recupération API work ( pour les images du projet)
@@ -73,99 +79,30 @@ const fetchWork = async () => {
   console.log(work);
   const workDecoded = await work.json();
   console.log(workDecoded);
-  displayWork = workDecoded;
-  console.log(displayWork);
-  displayWork.forEach((e) => {
-    // récupere la catégory de l'oeuvre
-    const categorieWork = e.category.name;
-    console.log(categorieWork);
-  });
-  // filtre la catégorie appartement.
-  //******************* */
-  const apartmentWork = displayWork.filter(function (apartment) {
-    return apartment.category.name == "Appartements";
-  });
-  // console.log(apartmentWork);
-  displayfilterAp = apartmentWork;
-  //************************* */
-
-  // filtre la partie Objets
-  //*********************** */
-  const objetWork = displayWork.filter(function (objet) {
-    return objet.category.name == "Objets";
-  });
-  displayFilterObjet = objetWork;
-  // console.log(displayFilterObjet);
-  //***************************** */
-
-  // filtre la partie Hotels & restaurant
-  //********************************** */
-  const hotelWork = displayWork.filter(function (objet) {
-    return objet.category.name == "Hotels & restaurants";
-  });
-  displayFilterHotel = hotelWork;
-  // console.log(displayFilterHotel);
+  return workDecoded;
 };
 
 //--------------------- */
 
 // modelage de la partie gallery
-const display = async () => {
-  await fetchCategories();
-  await fetchWork();
-  galery.innerHTML = displayWork
-    .map(
-      (projet) =>
-        `
-      <figure>
-        <img src=${projet.imageUrl} alt="photo de ${projet.title}">
-        <figcaption>${projet.title}</figcaption>
-      </figure>
-  `
-    )
-
-    .join("");
+const displayWorks = async () => {
+  const works = await fetchWork();
+  works.forEach((work, index) => {
+    const workElement = createWorkElement(work);
+    galery.appendChild(workElement);
+  });
 };
 
-const displayApartment = async () => {
-  galery.innerHTML = displayfilterAp
-    .map(
-      (projet) =>
-        `
-  <figure>
-    <img src=${projet.imageUrl} alt="photo de ${projet.title}">
-    <figcaption>${projet.title}</figcaption>
-  </figure>
-`
-    )
-    .join("");
-};
-
-const displayObjet = async () => {
-  galery.innerHTML = displayFilterObjet
-    .map(
-      (projet) =>
-        `
-  <figure>
-    <img src=${projet.imageUrl} alt="photo de ${projet.title}">
-    <figcaption>${projet.title}</figcaption>
-  </figure>
-`
-    )
-    .join("");
-};
-const displayHotel = async () => {
-  galery.innerHTML = displayFilterHotel
-    .map(
-      (projet) =>
-        `
-  <figure>
-    <img src=${projet.imageUrl} alt="photo de ${projet.title}">
-    <figcaption>${projet.title}</figcaption>
-  </figure>
-`
-    )
-    .join("");
+const createWorkElement = (work) => {
+  const figureElement = document.createElement("figure");
+  const imgElement = document.createElement("img");
+  const figCaptionElement = document.createElement("figcaption");
+  imgElement.setAttribute("src", work.imageUrl);
+  imgElement.setAttribute("alt", work.title);
+  figCaptionElement.textContent = work.title;
+  figureElement.appendChild(imgElement);
+  figureElement.appendChild(figCaptionElement);
+  return figureElement;
 };
 
 //------------------------------ */
@@ -174,10 +111,11 @@ const displayHotel = async () => {
 
 const admin = () => {
   if (token) {
+    const buttonLog = document.getElementById("buttonLog");
     const header = document.querySelector("header");
     const adminHead = document.querySelector(".admin-header");
     const modifIntro = document.querySelector(".modif-intro");
-    const modifPortfolio = document.querySelector(".modif-portfolio");
+    document.getElementById("categoriesFilter").style.display = "none";
     buttonLog.textContent = "logout";
     adminHead.style.display = "flex";
     header.style.marginTop = "100px";
@@ -195,17 +133,60 @@ buttonLog.addEventListener("click", () => {
 //-------------------------------------
 
 const openGalerieModal = () => {
-  const modifPortfolio = document.querySelector(".modif-portfolio");
-  const titleGalery = document.getElementById("modal-title");
-  console.log(titleGalery);
+  document.querySelector(".overlay").style.display = "block";
+  document.querySelector(".modal").style.display = "block";
   titleGalery.textContent = "Galerie photo";
-  modifPortfolio.addEventListener("click", () => {
-    document.querySelector(".overlay").style.display = "block";
-    document.querySelector(".modal").style.display = "block";
-    const body = document.querySelector("body");
-    // body.addEventListener("click", closeGalerieModal);
+  modalBody.innerHTML = galery.innerHTML;
+  const modalFigCaptions = modalBody.querySelectorAll("figcaption");
+  returnModal.style.display = "none";
+  modalFigCaptions.forEach((figcaption, index) => {
+    figcaption.textContent = "éditer ";
+  });
+  const modalFigures = modalBody.querySelectorAll("figure");
+  modalFigures.forEach((figure) => {
+    const divIconDelete = document.createElement("div");
+    const iconDelete = document.createElement("i");
+    iconDelete.classList.add("fa-regular", "fa-trash-can", "deleteFigure");
+    figure.appendChild(divIconDelete);
+    divIconDelete.appendChild(iconDelete);
+    divIconDelete.classList.add("divDeleteFigure");
+  });
+
+  overlay.addEventListener("click", closeGalerieModal);
+};
+
+const openAddphotoModal = () => {
+  returnModal.addEventListener("click", () => {
+    openGalerieModal();
+  });
+  const buttonAddPhoto = document.getElementById("add_photo");
+  buttonAddPhoto.addEventListener("click", async () => {
+    const ContainerAddPhoto = document.createElement("div");
+    const iconeImg = document.createElement("i");
+    const buttonAddPicture = document.createElement("button");
+    const infoAddPicture = document.createElement("p");
+
+    titleGalery.textContent = "Ajout photo";
+    buttonAddPicture.textContent = "+ Ajouter photo";
+    infoAddPicture.textContent = "jpg,png : 4mo max";
+
+    iconeImg.classList.add("fa-regular", "fa-image", "icone-img");
+    buttonAddPicture.classList.add("button-add-picture");
+    ContainerAddPhoto.classList.add("ContainerAddPhoto");
+    infoAddPicture.classList.add("info-add-picture");
+
+    modalBody.innerHTML = "";
+    modalBody.appendChild(ContainerAddPhoto);
+    ContainerAddPhoto.appendChild(iconeImg);
+    ContainerAddPhoto.appendChild(buttonAddPicture);
+    ContainerAddPhoto.appendChild(infoAddPicture);
+
+    returnModal.style.display = "block";
   });
 };
+
+modifPortfolio.addEventListener("click", openGalerieModal);
+
 const overlay = document.querySelector(".overlay");
 const closeGalerieModal = () => {
   overlay.style.display = "none";
@@ -218,8 +199,8 @@ closeModifPortfolio.addEventListener("click", () => {
 
 (function Main() {
   displayCategories();
-  openGalerieModal();
 
   admin();
-  display();
+  displayWorks();
+  openAddphotoModal();
 })();

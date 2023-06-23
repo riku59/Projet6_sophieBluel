@@ -55,6 +55,12 @@ body {
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 }
+#categoriesFilter {
+	display: flex;
+	justify-content: center;
+	margin: 50px 0;
+	gap: 10px;
+}
 .button_form {
 	font-family: 'Syne';
 	font-weight: 700;
@@ -344,6 +350,15 @@ footer nav ul {
 	color: black;
 	font-size: 26px;
 }
+.return-modal {
+position: fixed;
+top: 32px;
+left: 36px;
+font-size: 20px;
+cursor: pointer;
+display: none;
+}
+
 .close-modal{
 	position: fixed;
 	top :32px;
@@ -358,4 +373,76 @@ footer nav ul {
 .modal input {
 	height: 40px;
 	border: none;
+}
+.modal-body {
+	
+	width: 70%;
+	margin: 0 auto ;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-row-gap: 20px;
+}
+.modal-body figure {
+	position: relative;
+}
+.modal-body img{
+	width: 76px;
+	height: 100px;
+	
+}
+.modal-body figcaption {
+	text-align: left;
+	margin-left: 6px;
+	font-size: 12px;
+}
+.modal-line{
+	width: 75%;
+	border: 1px solid #b3b3b3 ;
+	margin: 50px auto 40px;
+}
+#DeleteAllGalerie {
+	color: red;
+}
+.deleteFigure {
+	color: white;
+	background: black;
+	width: 18px;
+	height: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+}
+.divDeleteFigure {
+	position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+}
+.ContainerAddPhoto {
+	width: 420px;
+	height: 170px;
+	background: #E8F1F6;
+	display: flex;
+	flex-direction: column;
+}
+.icone-img{
+	color: #B9C5CC;
+	font-size: 50px;
+	margin-top: 25px;
+	margin-bottom: 15px;
+}
+.button-add-picture{
+	width: 173px;
+	height: 36px;
+	border-radius: 50px;
+	background: #CBD6DC;
+	margin: 0 auto;
+	color: #306685 ;
+	border: none;
+	cursor: pointer;
+}
+.info-add-picture{
+	margin-top: 8px;
+	font-size: 10px;
 }
