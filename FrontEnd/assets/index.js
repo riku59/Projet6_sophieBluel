@@ -169,14 +169,13 @@ const openAddphotoModal = () => {
     const createPara = document.createElement("p");
     const createLabel = document.createElement("label");
 
-    createLabel.textContent = "+ Ajouter photo ";
     createInputFile.setAttribute("type", "file");
 
     createInputFile.style.display = "none";
     formAddPicture.style.display = "block";
     titleGalery.textContent = "Ajout photo";
     createPara.textContent = "jpg,png : 4mo max";
-
+    createLabel.textContent = "+ Ajouter photo ";
     createiconeImg.classList.add("fa-regular", "fa-image", "icone-img");
     createContainerAddPhoto.classList.add("ContainerAddPhoto");
     createPara.classList.add("info-add-picture");
