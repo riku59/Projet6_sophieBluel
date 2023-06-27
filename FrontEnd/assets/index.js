@@ -5,7 +5,7 @@ const modalBody = document.querySelector(".modal-body");
 const titleGalery = document.getElementById("modal-title");
 const returnModal = document.querySelector(".return-modal");
 const modifPortfolio = document.querySelector(".modif-portfolio");
-const formAddPicture = document.querySelector(".modal-footer");
+const formAddPicture = document.querySelector(".formAddPicture");
 // console.log(buttonLog);
 // console.log(token);
 
@@ -27,7 +27,6 @@ const displayCategories = async () => {
   const categoriesFilter = document.getElementById("categoriesFilter");
   const categories = await fetchCategories();
   const works = await fetchWork();
-  console.log("coucou");
   console.log(createWorkElement(works[0]));
   // console.log(categories);
 
@@ -48,6 +47,7 @@ const displayCategories = async () => {
     addButtonFilter.textContent = categorie.name;
     console.log(categorie);
     addButtonFilter.setAttribute("id", categorie.name);
+    console.log(addButtonFilter);
     addButtonFilter.addEventListener("click", (event) => {
       console.log(event);
       const idCategorie = event.target.id;
@@ -100,6 +100,9 @@ const createWorkElement = (work) => {
   const figCaptionElement = document.createElement("figcaption");
   imgElement.setAttribute("src", work.imageUrl);
   imgElement.setAttribute("alt", work.title);
+  imgElement.setAttribute("data-id", work.id);
+  console.log(work.id);
+
   figCaptionElement.textContent = work.title;
   figureElement.appendChild(imgElement);
   figureElement.appendChild(figCaptionElement);
@@ -133,28 +136,82 @@ buttonLog.addEventListener("click", () => {
 // fonction modal
 //-------------------------------------
 
-const openGalerieModal = () => {
+const openGalerieModal = async () => {
+  const works = await fetchWork();
+  console.log(works);
   document.querySelector(".overlay").style.display = "block";
   document.querySelector(".modal").style.display = "block";
   formAddPicture.style.display = "none";
+
   titleGalery.textContent = "Galerie photo";
-  modalBody.innerHTML = galery.innerHTML;
+  modalBody.innerHTML = "";
+
+  works.forEach((work) => {
+    const workElement = createWorkElement(work); // Utiliser la fonction createWorkElement pour générer les éléments HTML correspondants
+    modalBody.appendChild(workElement); // Ajouter les éléments à modalBody
+  });
+
   const modalFigCaptions = modalBody.querySelectorAll("figcaption");
+  const buttonAddPhoto = document.getElementById("add_photo");
+
+  buttonAddPhoto.style.background = "#1D6154";
+  buttonAddPhoto.value = "Ajouter photo";
   returnModal.style.display = "none";
   modalFigCaptions.forEach((figcaption, index) => {
     figcaption.textContent = "éditer ";
   });
   const modalFigures = modalBody.querySelectorAll("figure");
+
   modalFigures.forEach((figure) => {
     const divIconDelete = document.createElement("div");
     const iconDelete = document.createElement("i");
     iconDelete.classList.add("fa-regular", "fa-trash-can", "deleteFigure");
+    console.log(figure);
+    iconDelete.setAttribute("id", `${figure.id}`);
+
+    console.log(iconDelete);
     figure.appendChild(divIconDelete);
     divIconDelete.appendChild(iconDelete);
     divIconDelete.classList.add("divDeleteFigure");
+
+    // iconDelete.addEventListener("click", () => {});
   });
 
   overlay.addEventListener("click", closeGalerieModal);
+};
+
+const deleteProjet = () => {
+  const GaleryModal = document.querySelector(".modal-body");
+  GaleryModal.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("fa-trash-can")) {
+      e.preventDefault();
+
+      const selectedPicture =
+        e.target.parentNode.parentNode.querySelector("img");
+      const pictureId = selectedPicture.getAttribute("data-id");
+      await deletePhoto(pictureId);
+      selectedPicture.parentNode.parentNode.removeChild(
+        selectedPicture.parentNode
+      );
+    }
+  });
+};
+
+const deletePhoto = async (photoId) => {
+  const response = await fetch(`http://localhost:5678/api/works/${photoId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.ok) {
+    console.log("La photo a été supprimée avec succès.");
+  } else {
+    console.error(
+      "Une erreur s'est produite lors de la suppression de la photo."
+    );
+  }
 };
 
 const openAddphotoModal = () => {
@@ -163,38 +220,23 @@ const openAddphotoModal = () => {
   });
   const buttonAddPhoto = document.getElementById("add_photo");
   buttonAddPhoto.addEventListener("click", async () => {
-    const createContainerAddPhoto = document.createElement("div");
-    const createiconeImg = document.createElement("i");
-    const createInputFile = document.createElement("input");
-    const createPara = document.createElement("p");
-    const createLabel = document.createElement("label");
+    buttonAddPhoto.style.background = "rgb(167, 167, 167)";
 
-    createInputFile.setAttribute("type", "file");
+    formAddPicture.style.display = "flex";
 
-    createInputFile.style.display = "none";
-    formAddPicture.style.display = "block";
+    buttonAddPhoto.value = "Valider";
     titleGalery.textContent = "Ajout photo";
-    createPara.textContent = "jpg,png : 4mo max";
-    createLabel.textContent = "+ Ajouter photo ";
-    createiconeImg.classList.add("fa-regular", "fa-image", "icone-img");
-    createContainerAddPhoto.classList.add("ContainerAddPhoto");
-    createPara.classList.add("info-add-picture");
-    createLabel.classList.add("button-add-picture");
-
-    createLabel.addEventListener("click", () => {
-      createInputFile.click(); // Simuler le clic sur l'input
-    });
 
     modalBody.innerHTML = "";
-    modalBody.appendChild(createContainerAddPhoto);
-    createContainerAddPhoto.appendChild(createiconeImg);
-    createContainerAddPhoto.appendChild(createInputFile);
-    createContainerAddPhoto.appendChild(createLabel);
-    createContainerAddPhoto.appendChild(createPara);
 
     returnModal.style.display = "block";
   });
 };
+
+// const deleteProjet = () => {
+// const GaleryModal = document.querySelector(".modal-body");
+
+// };
 
 modifPortfolio.addEventListener("click", openGalerieModal);
 
@@ -210,8 +252,8 @@ closeModifPortfolio.addEventListener("click", () => {
 
 (function Main() {
   displayCategories();
-
   admin();
   displayWorks();
   openAddphotoModal();
+  deleteProjet();
 })();

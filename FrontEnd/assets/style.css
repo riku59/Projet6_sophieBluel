@@ -447,27 +447,39 @@ display: none;
 	justify-content: center;
 	align-items: center;
 }
-.info-add-picture{
+#info-add-picture {
 	margin-top: 8px;
 	font-size: 10px;
+	text-align: center;
+	width: 100%;
 }
-.FormAddPicture {
+.formAddPicture {
 	display: flex;
 	flex-direction: column;
 	margin-top: 55px;
 	align-items: center;
 }
-.FormAddPicture label {
+.formAddPicture label {
+display: flex;
 margin-bottom: 10px;
 width: 70%;
 text-align: left;
 }
-.FormAddPicture p {
+input[type="file"]{
+	display: none;
+}
+.formAddPicture p {
 	width: 70%;
 	text-align: left;
-	
 }
-
+.add-picture{
+	width: 420px;
+	height: 169px;
+	background: rgba(232, 241, 246, 1);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 #titleNewPicture {
 	width: 70%;
 	height: 51px;
@@ -483,8 +495,13 @@ select {
 	border: none;
 	border: 1px solid gray;
 }
-#choicePicture {
+/* #choicePicture {
 	width: 173px;
 	height: 36px;
 	
+} */
+ #add_photo {
+	background: rgb(167, 167, 167);
+	width: 237px;
+	height: 36px;
 }

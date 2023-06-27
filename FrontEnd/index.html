@@ -31,20 +31,25 @@
         <h3 id="modal-title"></h3>
       </div>
       <div class="modal-body"></div>
+      <form action="#" class="formAddPicture">
+        <div class="add-picture">
+          <i class="fa-regular fa-image icone-img"></i>
+          <input type="file" id="file" />
+          <label for="file" class="button-add-picture">+ Ajouter photo</label>
+          <p id="info-add-picture">jpg,png : 4mo max</p>
+        </div>
 
-      <div class="modal-footer">
-        <form class="FormAddPicture" action="#">
-          <label for="titleNewPicture">Titre</label>
-          <input type="text" id="titleNewPicture" />
-          <p>Catégorie</p>
-          <select name="categorie" id="categorie">
-            <option value=""></option>
-            <option value="Objet">Objet</option>
-            <option value="Appartement">Appartements</option>
-            <option value="restaurants">Hôtels et restaurants</option>
-          </select>
-        </form>
-      </div>
+        <label for="titleNewPicture">Titre</label>
+        <input type="text" id="titleNewPicture" />
+        <p>Catégorie</p>
+        <select name="categorie" id="categorie">
+          <option value=""></option>
+          <option value="Objet">Objet</option>
+          <option value="Appartement">Appartements</option>
+          <option value="restaurants">Hôtels et restaurants</option>
+        </select>
+      </form>
+      <div class="modal-footer"></div>
       <div class="modal-line"></div>
       <input type="submit" value="Ajouter une photo" id="add_photo" />
       <p id="DeleteAllGalerie">Supprimer la galerie</p>
