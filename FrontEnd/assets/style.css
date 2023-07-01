@@ -372,8 +372,9 @@ display: none;
 	transform: rotate(90deg);
 }
 .modal input {
-	height: 40px;
 	border: none;
+	width: 237px;
+	height: 36px;
 }
 .modal-body {
 	
@@ -495,19 +496,26 @@ select {
 	border: none;
 	border: 1px solid gray;
 }
-/* #choicePicture {
-	width: 173px;
-	height: 36px;
-	
-} */
- #add_photo {
-	background: rgb(167, 167, 167);
-	width: 237px;
-	height: 36px;
-}
 #selectedPhoto  {
 	display: none;
 }
 .display-none {
 	display: none;
+}
+.image-preview {
+	width: 100px;
+	height: 100px;
+	margin-top: 10px;
+	display: flex;
+}
+.input-valid-ok {
+	font-family: 'Syne';
+	font-weight: 700;
+	color: white;
+	background-color: #1D6154;
+	margin : 2em auto ;
+	width: 180px;
+	text-align: center;
+	border-radius: 60px ;
+	cursor: pointer;
 }
