@@ -45,19 +45,21 @@ const displayCategories = async () => {
     categoriesFilter.appendChild(addButtonFilter);
     addButtonFilter.classList.add("button_form");
     addButtonFilter.textContent = categorie.name;
-    // console.log(categorie);
-    addButtonFilter.setAttribute("id", categorie.name);
+    console.log(categorie);
+    addButtonFilter.setAttribute("id", categorie.id);
     // console.log(addButtonFilter);
     addButtonFilter.addEventListener("click", (event) => {
       console.log(event);
       const idCategorie = event.target.id;
 
       let objetWork = null;
-      if (idCategorie == "Tous") {
+      if (idCategorie == -1) {
+        console.log(idCategorie);
         objetWork = works;
       } else {
         objetWork = works.filter(function (objet) {
-          return objet.category.name == idCategorie;
+          console.log(idCategorie);
+          return objet.category.id == idCategorie;
         });
       }
 
@@ -108,6 +110,7 @@ const createWorkElement = (work, modal = false) => {
   image.setAttribute("alt", work.title);
 
   image.setAttribute("data-id", work.id);
+
   // console.log(work.id);
   if (modal) {
     // viewElement.classList.add("modal-work");
@@ -223,109 +226,85 @@ const fetchDeletePhoto = async (photoId) => {
 
 const addNewPicture = async (event) => {
   event.preventDefault();
+
   const titleInput = document.getElementById("titleNewPicture");
   const categoryInput = document.getElementById("categorie");
-  const imageInput = document.getElementById("file");
+  const selectedIndex = categoryInput.selectedIndex;
+  const selectedcategory = categoryInput.options[selectedIndex];
+  console.log(selectedIndex);
+  console.log(selectedcategory);
 
+  const imageInput = document.getElementById("file");
   const title = titleInput.value;
-  const category = categoryInput.value;
+  const category = selectedcategory.id;
   const image = imageInput.files[0];
 
+  console.log(imageInput.files);
+  console.log(categoryInput);
+
   console.log(title);
-  console.log(category);
-  console.log(image.name);
+
+  console.log(categoryInput);
 
   if (!title || !category || !image) {
     alert("Veuillez remplir tous les champs pour ajouter un nouveau projet.");
     return;
   }
 
+  console.log(categoryInput);
   const formData = new FormData();
   formData.append("image", image, image.name);
   formData.append("title", title);
   formData.append("category", category);
 
   console.log([...formData]);
-  // await fetchAddPhoto(formData);
-  const token = localStorage.getItem(`token`);
-
-  try {
-    const response = await fetch("http://localhost:5678/api/works", {
-      method: "POST",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.ok) {
-      console.log("La photo a été ajoutée avec succès.");
-
-      titleInput.value = "";
-      categoryInput.value = "";
-      imageInput.value = "";
-
-      displayWorks();
-    } else {
-      if (response.status === 401) {
-        console.error("Erreur : Unauthorized");
-        alert("Erreur : Unauthorized");
-      } else if (response.status === 400) {
-        try {
-          const errorData = await response.json();
-          console.error("Erreur 400 :", errorData);
-          alert(`Erreur : ${errorData.error.message}`);
-        } catch (error) {
-          console.error(
-            "Erreur lors de la conversion de la réponse en JSON :",
-            error
-          );
-          alert("Une erreur s'est produite lors de l'ajout de la photo.");
-        }
-      } else {
-        console.error(
-          "Une erreur s'est produite lors de l'ajout de la photo. Code de statut :",
-          response.status
-        );
-        alert("Une erreur s'est produite lors de l'ajout de la photo.");
-      }
-    }
-  } catch (error) {
-    console.error("Une erreur s'est produite lors de la requête API :", error);
-  }
+  await fetchAddPhoto(formData);
 };
 
 const submitForm = document.querySelector(".formAddPicture");
 submitForm.addEventListener("submit", addNewPicture);
-// const fetchAddPhoto = async (formData) => {
-//   const response = await fetch("http://localhost:5678/api/works", {
-//     method: "POST",
-//     body: formData,
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   if (response.ok) {
-//     console.log("La photo a été ajoutée avec succès.");
-//   } else {
-//     console.error("Une erreur s'est produite lors de l'ajout de la photo.");
-//   }
-//   return;
-// };
+const fetchAddPhoto = async (formData) => {
+  const response = await fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    body: formData,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.ok) {
+    console.log("La photo a été ajoutée avec succès.");
+    alert("La photo a été ajoutée avec succès");
+  } else {
+    console.error("Une erreur s'est produite lors de l'ajout de la photo.");
+    alert("Une erreur s'est produite lors de l'ajout de la photo.");
+  }
+  return;
+};
 
-const openAddphotoModal = () => {
+const openAddphotoModal = async () => {
   returnModal.addEventListener("click", () => {
     const buttonAddPhoto = document.getElementById("add_photo");
+    const image = document.getElementById("img-preview");
+    const inputTitlePicture = document.getElementById("titleNewPicture");
+    const categoryInput = document.getElementById("categorie");
+
+    const picture = document.getElementById("file");
+    const pictureSelected = picture.files[0];
+
+    image.src = "";
+    inputTitlePicture.value = "";
+    categoryInput.selectedIndex = 0;
+    console.log(pictureSelected);
 
     buttonAddPhoto.style.display = "block";
     buttonValid.style.display = "none";
     openGalerieModal();
   });
-
+  const categories = await fetchCategories();
   const buttonAddPhoto = document.getElementById("add_photo");
   const buttonValid = document.getElementById("valid");
   const suppAllGalery = document.getElementById("DeleteAllGalerie");
-
+  const categoryInput = document.getElementById("categorie");
   // renvoie vers la modale pour ajouter une photo
   buttonAddPhoto.addEventListener("click", () => {
     buttonValid.style.background = "rgb(167, 167, 167)";
@@ -337,7 +316,21 @@ const openAddphotoModal = () => {
     suppAllGalery.classList.add("display-none");
     titleGalery.textContent = "Ajout photo";
     modalBody.innerHTML = "";
+    categoryInput.innerHTML = "";
+    const option = document.createElement("option");
+    option.value = "";
+    option.text = "";
+    categoryInput.appendChild(option);
 
+    categories.forEach((cat) => {
+      console.log(cat);
+      const option = document.createElement("option");
+      option.value = "";
+      option.text = cat.name;
+      option.setAttribute("id", cat.id);
+      categoryInput.appendChild(option);
+      console.log(option);
+    });
     const inputTitlePicture = document.getElementById("titleNewPicture");
     const selectCategory = document.getElementById("categorie");
 
@@ -345,6 +338,7 @@ const openAddphotoModal = () => {
     inputTitlePicture.addEventListener("input", updateValidButton);
     selectCategory.addEventListener("change", updateValidButton);
     inputFile.addEventListener("input", updateValidButton);
+
     buttonValid.addEventListener("click", addNewPicture);
   });
 };
@@ -385,11 +379,12 @@ closeModifPortfolio.addEventListener("click", () => {
 
 const checkerAddWork = () => {
   const inputTitlePicture = document.getElementById("titleNewPicture");
-  const inputCategory = document.getElementById("categorie");
-  const valid = document.getElementById("valid");
+  const categoryInput = document.getElementById("categorie");
+  const selectedIndex = categoryInput.selectedIndex;
+  const selectedcategory = categoryInput.options[selectedIndex];
   const picture = document.getElementById("file");
+  console.log(selectedcategory.text);
 
-  // valid.addEventListener("click", () => {
   if (picture.files.length === 0) {
     // alert("Veuillez selectionner une photo.");
     return false;
@@ -399,14 +394,14 @@ const checkerAddWork = () => {
     return false;
   }
 
-  if (inputCategory.value === "") {
+  if (selectedcategory.text === "") {
     // alert("veuillez choisir une des catégories.");
     return false;
   }
 
   // si tous est ok :
+  console.log("ok");
   return true;
-  // });
 };
 
 const updateValidButton = () => {
@@ -425,6 +420,6 @@ const updateValidButton = () => {
   openAddphotoModal();
   deleteProjet();
   createWorkElement();
-  checkerAddWork();
+
   // addPictureDisplay;
 })();
