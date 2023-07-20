@@ -6,17 +6,13 @@ const titleGalery = document.getElementById("modal-title");
 const returnModal = document.querySelector(".return-modal");
 const modifPortfolio = document.querySelector(".modif-portfolio");
 const formAddPicture = document.querySelector(".formAddPicture");
-// console.log(buttonLog);
-// console.log(token);
 
 //-----------------
 //récupération API Categories (pour les filtres)
 //*****************
 const fetchCategories = async () => {
   const categories = await fetch("http://localhost:5678/api/categories");
-  // console.log(categories);
   const categoriesDecoded = await categories.json();
-  // console.log(categoriesDecoded);
   return categoriesDecoded;
 };
 //-------------------------------- */
@@ -27,16 +23,8 @@ const displayCategories = async () => {
   const categoriesFilter = document.getElementById("categoriesFilter");
   const categories = await fetchCategories();
   const works = await fetchWork();
-  // console.log(createWorkElement(works[0]));
-  // console.log(categories);
-
-  // au click sur le bouton "tous" , affiche moi toute la gallerie.
-  // addButton.addEventListener("click", () => {
-  //   display();
-  // });
 
   categories.unshift({ id: -1, name: "Tous" });
-  console.log(categories);
   //***********************************
   //création bouton "filters"
 
@@ -45,25 +33,21 @@ const displayCategories = async () => {
     categoriesFilter.appendChild(addButtonFilter);
     addButtonFilter.classList.add("button_form");
     addButtonFilter.textContent = categorie.name;
-    console.log(categorie);
     addButtonFilter.setAttribute("id", categorie.id);
-    // console.log(addButtonFilter);
     addButtonFilter.addEventListener("click", (event) => {
-      console.log(event);
       const idCategorie = event.target.id;
-
       let objetWork = null;
+
       if (idCategorie == -1) {
-        console.log(idCategorie);
         objetWork = works;
       } else {
         objetWork = works.filter(function (objet) {
-          console.log(idCategorie);
           return objet.category.id == idCategorie;
         });
       }
-
+      // vide la galerie pour empécher qu'il se rajoute.
       galery.innerHTML = "";
+
       objetWork.forEach((work, index) => {
         const workElement = createWorkElement(work);
 
@@ -79,15 +63,14 @@ const displayCategories = async () => {
 //recupération API work ( pour les images du projet)
 const fetchWork = async () => {
   const work = await fetch("http://localhost:5678/api/works");
-  // console.log(work);
   const workDecoded = await work.json();
-  // console.log(workDecoded);
+
   return workDecoded;
 };
 
 //--------------------- */
 
-// modelage de la partie gallery
+// récupération et affichage des projet
 const displayWorks = async () => {
   const works = await fetchWork();
   galery.innerHTML = "";
@@ -96,7 +79,7 @@ const displayWorks = async () => {
     galery.appendChild(workElement);
   });
 };
-
+// modélage de la partie gallery et modal
 const createWorkElement = (work, modal = false) => {
   const viewElement = document.createElement("figure");
   const image = document.createElement("img");
@@ -108,14 +91,11 @@ const createWorkElement = (work, modal = false) => {
   viewElement.setAttribute("id", work.id);
   image.setAttribute("src", work.imageUrl);
   image.setAttribute("alt", work.title);
-
   image.setAttribute("data-id", work.id);
 
-  // console.log(work.id);
+  // si on est sur la modal :
   if (modal) {
-    // viewElement.classList.add("modal-work");
     figCaption.innerText = "éditer";
-
     const divIconDelete = document.createElement("div");
     const iconDelete = document.createElement("i");
 
@@ -126,13 +106,10 @@ const createWorkElement = (work, modal = false) => {
     viewElement.appendChild(divIconDelete);
     divIconDelete.appendChild(iconDelete);
 
-    console.log("modal");
+    // sur la page principal :
   } else {
     figCaption.innerText = work.title;
-    console.log("no-modal");
   }
-
-  figCaption.textContent = work.title;
 
   viewElement.appendChild(image);
   viewElement.appendChild(figCaption);
@@ -143,6 +120,7 @@ const createWorkElement = (work, modal = false) => {
 // ajout du Logout et de la mise en page
 //------------------------------ */
 
+// mise en forme de la page d'acceuil si on est log
 const admin = () => {
   if (token) {
     const buttonLog = document.getElementById("buttonLog");
@@ -157,6 +135,7 @@ const admin = () => {
     modifPortfolio.style.display = "flex";
   }
 };
+// lors du clique sur "lougout" , tu supprime le token si il existe
 buttonLog.addEventListener("click", () => {
   if (token) {
     localStorage.removeItem("token");
@@ -168,12 +147,10 @@ buttonLog.addEventListener("click", () => {
 
 const openGalerieModal = async () => {
   const works = await fetchWork();
-  console.log(works);
+
   document.querySelector(".overlay").style.display = "block";
   document.querySelector(".modal").style.display = "block";
-
   formAddPicture.style.display = "none";
-
   titleGalery.textContent = "Galerie photo";
   modalBody.innerHTML = "";
 
@@ -184,8 +161,12 @@ const openGalerieModal = async () => {
 
   returnModal.style.display = "none";
 
+  // ferme la modal si on clique en dehors de la modal.
+  const overlay = document.querySelector(".overlay");
+
   overlay.addEventListener("click", closeGalerieModal);
 };
+modifPortfolio.addEventListener("click", openGalerieModal);
 
 const deleteProjet = () => {
   const galeryModal = document.querySelector(".modal-body");
@@ -195,8 +176,6 @@ const deleteProjet = () => {
       const selectedPicture =
         e.target.parentNode.parentNode.querySelector("img");
       const pictureId = selectedPicture.getAttribute("data-id");
-      console.log(pictureId);
-      console.log(selectedPicture);
       selectedPicture.parentNode.parentNode.removeChild(
         selectedPicture.parentNode
       );
@@ -212,15 +191,10 @@ const fetchDeletePhoto = async (photoId) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log(response);
+
   if (response.ok) {
-    console.log("La photo a été supprimée avec succès.");
-    preventDefault();
-  } else {
-    console.error(
-      "Une erreur s'est produite lors de la suppression de la photo."
-    );
-  }
+    await displayWorks();
+  } 
   return;
 };
 
@@ -231,38 +205,28 @@ const addNewPicture = async (event) => {
   const categoryInput = document.getElementById("categorie");
   const selectedIndex = categoryInput.selectedIndex;
   const selectedcategory = categoryInput.options[selectedIndex];
-  console.log(selectedIndex);
-  console.log(selectedcategory);
-
   const imageInput = document.getElementById("file");
   const title = titleInput.value;
   const category = selectedcategory.id;
   const image = imageInput.files[0];
-
-  console.log(imageInput.files);
-  console.log(categoryInput);
-
-  console.log(title);
-
-  console.log(categoryInput);
 
   if (!title || !category || !image) {
     alert("Veuillez remplir tous les champs pour ajouter un nouveau projet.");
     return;
   }
 
-  console.log(categoryInput);
   const formData = new FormData();
   formData.append("image", image, image.name);
   formData.append("title", title);
   formData.append("category", category);
 
-  console.log([...formData]);
   await fetchAddPhoto(formData);
+  window.location.href = "index.html";
 };
 
 const submitForm = document.querySelector(".formAddPicture");
 submitForm.addEventListener("submit", addNewPicture);
+
 const fetchAddPhoto = async (formData) => {
   const response = await fetch("http://localhost:5678/api/works", {
     method: "POST",
@@ -272,43 +236,76 @@ const fetchAddPhoto = async (formData) => {
     },
   });
   if (response.ok) {
-    console.log("La photo a été ajoutée avec succès.");
+    await displayWorks();
     alert("La photo a été ajoutée avec succès");
   } else {
-    console.error("Une erreur s'est produite lors de l'ajout de la photo.");
     alert("Une erreur s'est produite lors de l'ajout de la photo.");
   }
   return;
 };
 
 const openAddphotoModal = async () => {
+  const buttonValid = document.getElementById("valid");
+  const inputTitlePicture = document.getElementById("titleNewPicture");
+  const selectCategory = document.getElementById("categorie");
+  const inputFile = document.getElementById("file");
+
+  returnToDeleteProject(); // renvoie vers la modale pour supprimer un projet
+  modalAddPictureBuild(); // mise en forme de la modal pour ajouter un projet
+
+  // vérifie que les 3 demande (photo , titre et categorie sont ok
+  inputTitlePicture.addEventListener("input", updateValidButton);
+  selectCategory.addEventListener("change", updateValidButton);
+  inputFile.addEventListener("input", updateValidButton);
+  //---------------------------------------------------------------------
+  // essaye d'ajouter un nouveau projet au click sur le bouton valider.
+  buttonValid.addEventListener("click", addNewPicture);
+};
+
+const createCategoryForAddPicture = async () => {
+  const categories = await fetchCategories();
+  const categoryInput = document.getElementById("categorie");
+
+  categories.forEach((cat) => {
+    const option = document.createElement("option");
+
+    option.value = "";
+    option.text = cat.name;
+    option.setAttribute("id", cat.id);
+    categoryInput.appendChild(option);
+  });
+};
+
+const returnToDeleteProject = () => {
   returnModal.addEventListener("click", () => {
+    const buttonValid = document.getElementById("valid");
     const buttonAddPhoto = document.getElementById("add_photo");
     const image = document.getElementById("img-preview");
     const inputTitlePicture = document.getElementById("titleNewPicture");
     const categoryInput = document.getElementById("categorie");
-
     const picture = document.getElementById("file");
     const pictureSelected = picture.files[0];
+    const icone = document.querySelector(".icone-img");
 
-    image.src = "";
+    image.style.display = "none";
     inputTitlePicture.value = "";
     categoryInput.selectedIndex = 0;
-    console.log(pictureSelected);
-
+    icone.classList.add("display-flex");
+    image.classList.remove("image-preview");
     buttonAddPhoto.style.display = "block";
     buttonValid.style.display = "none";
     openGalerieModal();
   });
-  const categories = await fetchCategories();
+};
+
+const modalAddPictureBuild = () => {
   const buttonAddPhoto = document.getElementById("add_photo");
-  const buttonValid = document.getElementById("valid");
   const suppAllGalery = document.getElementById("DeleteAllGalerie");
+  const buttonValid = document.getElementById("valid");
   const categoryInput = document.getElementById("categorie");
-  // renvoie vers la modale pour ajouter une photo
+
   buttonAddPhoto.addEventListener("click", () => {
     buttonValid.style.background = "rgb(167, 167, 167)";
-
     formAddPicture.style.display = "flex";
     returnModal.style.display = "block";
     buttonValid.style.display = "block";
@@ -322,56 +319,41 @@ const openAddphotoModal = async () => {
     option.text = "";
     categoryInput.appendChild(option);
 
-    categories.forEach((cat) => {
-      console.log(cat);
-      const option = document.createElement("option");
-      option.value = "";
-      option.text = cat.name;
-      option.setAttribute("id", cat.id);
-      categoryInput.appendChild(option);
-      console.log(option);
-    });
-    const inputTitlePicture = document.getElementById("titleNewPicture");
-    const selectCategory = document.getElementById("categorie");
-
-    // vérifie que les 3 demande (photo , titre et categorie sont ok
-    inputTitlePicture.addEventListener("input", updateValidButton);
-    selectCategory.addEventListener("change", updateValidButton);
-    inputFile.addEventListener("input", updateValidButton);
-
-    buttonValid.addEventListener("click", addNewPicture);
+    createCategoryForAddPicture();
+    addPictureDisplay();
   });
 };
 
-// const addPictureDisplay = () => {
+const addPictureDisplay = () => {
+  const inputFile = document.getElementById("file");
+  const icone = document.querySelector(".icone-img");
+  inputFile.addEventListener("change", (e) => {
+    if (e.target.files.length == 0) {
+      alert("veillez selectionner une photo");
+      return false;
+    }
+    const imgPreview = document.getElementById("img-preview");
+    const file = e.target.files[0];
+    const urlFile = URL.createObjectURL(file);
+    const buttonAddPhoto = document.querySelector(".button-add-picture");
+    const infoPicture = document.getElementById("info-add-picture");
+    imgPreview.setAttribute("src", urlFile);
+    imgPreview.style.display = "flex";
+    infoPicture.classList.add("display-none");
+    icone.classList.add("display-none");
+    icone.classList.remove("display-flex");
+    imgPreview.classList.add("image-preview");
+    buttonAddPhoto.style.marginTop = "10px";
+  });
+};
 
-const inputFile = document.getElementById("file");
-const icone = document.querySelector(".icone-img");
-inputFile.addEventListener("change", (e) => {
-  if (e.target.files.length == 0) {
-    alert("veillez selectionner une photo");
-    return false;
-  }
-  const imgPreview = document.getElementById("img-preview");
-  const file = e.target.files[0];
-  const urlFile = URL.createObjectURL(file);
-  const buttonAddPhoto = document.querySelector(".button-add-picture");
-  const infoPicture = document.getElementById("info-add-picture");
-  imgPreview.setAttribute("src", urlFile);
-  infoPicture.classList.add("display-none");
-  icone.classList.add("display-none");
-  imgPreview.classList.add("image-preview");
-  buttonAddPhoto.style.marginTop = "10px";
-});
-// };
-
-modifPortfolio.addEventListener("click", openGalerieModal);
-
-const overlay = document.querySelector(".overlay");
 const closeGalerieModal = () => {
+  const overlay = document.querySelector(".overlay");
   overlay.style.display = "none";
+
   document.querySelector(".modal").style.display = "none";
 };
+// cible la croix et appel closeGalerieModal si elle est cliqué
 const closeModifPortfolio = document.querySelector(".fa-xmark");
 closeModifPortfolio.addEventListener("click", () => {
   closeGalerieModal();
@@ -383,27 +365,23 @@ const checkerAddWork = () => {
   const selectedIndex = categoryInput.selectedIndex;
   const selectedcategory = categoryInput.options[selectedIndex];
   const picture = document.getElementById("file");
-  console.log(selectedcategory.text);
 
   if (picture.files.length === 0) {
-    // alert("Veuillez selectionner une photo.");
     return false;
   }
   if (inputTitlePicture.value.trim() === "") {
-    // alert("Veuillez ajouter un titre a la photo.");
     return false;
   }
 
   if (selectedcategory.text === "") {
-    // alert("veuillez choisir une des catégories.");
     return false;
   }
 
   // si tous est ok :
-  console.log("ok");
   return true;
 };
 
+// change la couleur du bouton valider en vert
 const updateValidButton = () => {
   const validButton = document.getElementById("valid");
   const isValid = checkerAddWork();
@@ -420,6 +398,4 @@ const updateValidButton = () => {
   openAddphotoModal();
   deleteProjet();
   createWorkElement();
-
-  // addPictureDisplay;
 })();

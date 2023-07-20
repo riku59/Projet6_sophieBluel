@@ -1,3 +1,8 @@
+const mailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const submitLog = document.querySelector('input[type="submit"');
+const errorDisplay = document.getElementById("notFound");
+
 function requestLogin() {
   return fetch("http://localhost:5678/api/users/login", {
     method: "POST",
@@ -12,15 +17,6 @@ function requestLogin() {
     credentials: "same-origin",
   });
 }
-
-const mailInput = document.getElementById("email");
-// console.log(mailInput);
-const passwordInput = document.getElementById("password");
-// console.log(passwordInput);
-const submitLog = document.querySelector('input[type="submit"');
-const errorDisplay = document.getElementById("notFound");
-// console.log(submitLog);
-// console.log(errorDisplay);
 
 //-------------------------------
 // Vérification de l'e-mail
@@ -38,35 +34,32 @@ const emailCheker = (value) => {
     errorMail.textContent = "";
   }
 };
-
-mailInput.addEventListener("input", (e) => {
-  console.log(e.target.value);
-  emailCheker(e.target.value); // fonction pour vérifier la forme de l'émail.
-});
-
+const emailInput = () => {
+  mailInput.addEventListener("input", (e) => {
+    emailCheker(e.target.value); // fonction pour vérifier la forme de l'émail.
+  });
+};
 //----------------------------------------------------
 
-passwordInput.addEventListener("input", (e) => {
-  console.log(e.target.value);
-});
-
 // test de l'identifiant + mot de passe
-submitLog.addEventListener("click", (e) => {
-  e.preventDefault();
-  stockEmail = mailInput.value;
-  stockPassword = passwordInput.value;
-  requestLogin()
-    .then((Response) => Response.json())
-    .then((login) => {
-      console.log(login); //envoie le UserID et le token lorsque l'identifiant est bon.
-      if (login.token) {
-        localStorage.setItem("token", login.token); //stock le token dans le localStorage
-        window.location.href = "./index.html"; // renvoie a la page index.html
-        console.log("Utilisateur connécté");
-      } else {
-        console.error(" token introuvable");
-        errorDisplay.textContent = "Identifiant ou Mot de passe incorrect";
-        errorDisplay.classList.add("notFound");
-      }
-    });
-});
+const verifEmailAndPassword = () => {
+  submitLog.addEventListener("click", (e) => {
+    e.preventDefault();
+    stockEmail = mailInput.value;
+    stockPassword = passwordInput.value;
+    requestLogin()
+      .then((Response) => Response.json())
+      .then((login) => {
+        // si le token est ok,
+        if (login.token) {
+          localStorage.setItem("token", login.token); //stock le token dans le localStorage
+          window.location.href = "./index.html"; // renvoie a la page index.html
+        } else {
+          errorDisplay.textContent = "Identifiant ou Mot de passe incorrect";
+          errorDisplay.classList.add("notFound");
+        }
+      });
+  });
+};
+emailInput();
+verifEmailAndPassword();
